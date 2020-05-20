@@ -35,7 +35,6 @@ class mainClass:
 
         ret = GUI(self.ot, self.ff, self.st, self.comp)
         t1 = mainPage(self.ot, self.st, self.comp)
-
         self.initListener()
         sys.exit(self.ot.app.exec_())
 
@@ -78,7 +77,7 @@ class GUI(QtGui.QMainWindow):
         self.statusbar = self.statusBar()
         self.statusbar.setStyleSheet(self.st.statusbar)
         self.ot.network_status = self.comp.createlabel(self.ot.desktop_width * 0.05, 30, "Network", self.st.valid_label)
-        self.network_timer.timedout.connect(self.network_check)
+        self.network_timer.timeout.connect(self.network_check)
 
         self.ot.statusbar = self.comp.createlabel(self.ot.desktop_width * 0.92, 30, '1235478', self.st.valid_label)
         self.statusbar.addPermanentWidget(self.ot.network_status)
@@ -99,7 +98,8 @@ class GUI(QtGui.QMainWindow):
         action_gui.triggered.connect(self.controllerApp)
 
     def network_check(self):
-        
+        pass
+
     def screenShot(self):
         QtGui.QPixmap.grabWindow(self.ot.app.desktop().winId()).save('../out/test'+self.ot.gettimedate()+'.png', 'png')
 
@@ -126,7 +126,7 @@ class GUI(QtGui.QMainWindow):
 
         dialog.exec_()
 
-    '''
+
     def closeEvent(self, event):
         reply = QtGui.QMessageBox.question(self, 'Message',
                                            "Are you sure to quit?", QtGui.QMessageBox.No |
@@ -138,7 +138,7 @@ class GUI(QtGui.QMainWindow):
         else:
             event.ignore()
     
-    '''
+
     def initListener(self):
         rt = ReceiverHandler(self.ot, self.ff)
         rt.start()

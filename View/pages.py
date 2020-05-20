@@ -22,12 +22,12 @@ class page1:
         vbox.addWidget(config_restable_gb)
 
         status_gb = self.statusResponse()
-        config_res_gb = self.configurationResponse()
+        health_res_gb = self.healthResponse()
 
 
         Hbox.addWidget(config_req_gb)
         Hbox.addLayout(vbox)
-        Hbox.addWidget(config_res_gb)
+        Hbox.addWidget(health_res_gb)
         Hbox.addWidget(status_gb)
 
     def statusResponse(self):
@@ -48,6 +48,27 @@ class page1:
         status_gb_l.addLayout(vbox2)
 
         return status_gb
+
+
+    def healthResponse(self):
+        health_gb = self.comp.creategroupbox(self.widget.width() * 0.22, -1, " DL Health")
+        health_gb_l = self.comp.createHbox(health_gb)
+        len1 = len(self.twdl.ground_dl_health_items)
+
+        li = []
+        vbox1 = self.comp.createVbox()
+        vbox2 = self.comp.createVbox()
+        for i in range(len1):
+            label = self.comp.createlabel(health_gb.width() * 0.35, -1, self.twdl.ground_dl_health_items[i])
+            lineedit = self.comp.createlineedit(health_gb.width() * 0.4, -1, False, self.st.line_readonly)
+            vbox1.addWidget(label)
+            vbox2.addWidget(lineedit)
+            li.append(lineedit)
+        health_gb_l.addLayout(vbox1)
+        health_gb_l.addLayout(vbox2)
+
+        return health_gb
+
 
 
 

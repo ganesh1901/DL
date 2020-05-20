@@ -253,62 +253,50 @@ class TWDL:
 
         self.ground_dl_status_items_list_offset = [5, 3, 6, 7, 18, 29, 30, 31, 32, 35, 36, 37, 38 ]
 
-        self.ground_rsp_status_map = {}
-        self.ground_rsp_status_map[29][0xffff] = "Port2"
-        self.ground_rsp_status_map[29][0x0] = "Port1"
-
-        self.ground_rsp_status_map[30][0] = "OFF"
-        self.ground_rsp_status_map[30][0xff01] = "1 Watt"
-        self.ground_rsp_status_map[30][0xff02] = "5 Watt"
-        self.ground_rsp_status_map[30][0xff03] = "15 Watt"
-        self.ground_rsp_status_map[30][0xff04] = "25 Watt"
-
-        self.ground_rsp_status_map[30][0xff01] = "1 Watt"
-
-        self.ground_rsp_status_map[35][0x00] = "ACQ"
-        self.ground_rsp_status_map[35][0xff] = "TRACK"
-
-        self.ground_rsp_status_map[36][0x00] = "ACQ"
-        self.ground_rsp_status_map[36][0xff] = "TRACK"
-
-        self.ground_rsp_status_map[37][0x00] = "OFF"
-        self.ground_rsp_status_map[37][0xff] = "ON"
-
-        self.ground_rsp_status_map[38][0x00] = "OFF"
-        self.ground_rsp_status_map[38][0xff] = "ON"
-
         self.ground_dl_health_items = ["Dual RX index", "SeqNo", "RX1-PLL", "RX2-PLL", "TX-PLL", "Decoder-1",
                                        "Decoder-2", "RX1-RSSI", "RX2-RSSI", "PA MODE", "RX1-Doppler",
                                        "Rx2-Doppler", "Tx Antenna"]
         self.ground_dl_health_offset = [5, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+        self.ground_dl_health_rspfmt = ''
 
-        self.ground_dl_health_items_map = { }
-        self.ground_dl_health_items_map[8][0x0] = "ACQ"
-        self.ground_dl_health_items_map[8][0xff] = "TRACK"
+        self.pa_show_map = {}
+        self.pa_show_map[0] = "OFF"
+        self.pa_show_map[0xff01] = "1 watt"
+        self.pa_show_map[0xff02] = "5 watt"
+        self.pa_show_map[0xff03] = "15 watt"
+        self.pa_show_map[0xff04] = "25 watt"
 
-        self.ground_dl_health_items_map[9][0] = "ACQ"
-        self.ground_dl_health_items_map[9][0xff] = "TRACK"
+        self.antenna_show_map = {}
+        self.antenna_show_map[0xffff] = "PORT 2"
+        self.antenna_show_map[0] = "PORT 1"
 
-        self.ground_dl_health_items_map[12][0] = "OFF"
-        self.ground_dl_health_items_map[12][0xff01] = "1 watt"
-        self.ground_dl_health_items_map[12][0xff02] = "5 watt"
-        self.ground_dl_health_items_map[12][0xff03] = "15 watt"
-        self.ground_dl_health_items_map[12][0xff04] = "25 watt"
+        self.fec_show_map = {}
+        self.fec_show_map[0xff] = "ON"
+        self.fec_show_map[0] = "OFF"
 
-        self.ground_dl_health_items_map[13][0] = "OFF"
-        self.ground_dl_health_items_map[13][0xff] = "ON"
+        self.decoder_show_map = {}
+        self.decoder_show_map[0xff] = "TRACK"
+        self.decoder_show_map[0] = "ACQ"
 
-        self.ground_dl_health_items_map[14][0] = "OFF"
-        self.ground_dl_health_items_map[14][0xff] = "ON"
+        self.ground_rsp_status_map = {}
+        self.ground_rsp_status_map[29] = self.antenna_show_map
+        self.ground_rsp_status_map[30] = self.pa_show_map
+        self.ground_rsp_status_map[35] = self.decoder_show_map
+        self.ground_rsp_status_map[36] = self.decoder_show_map
+        self.ground_rsp_status_map[37] = self.fec_show_map
+        self.ground_rsp_status_map[37] = self.fec_show_map
 
-        self.ground_dl_health_items_map[15][0] = "ON"
-        self.ground_dl_health_items_map[15][0xff] = "OFF"
+        self.ground_dl_health_items_map = {}
+        self.ground_dl_health_items_map[8] = self.decoder_show_map
+        self.ground_dl_health_items_map[9] = self.decoder_show_map
+        self.ground_dl_health_items_map[12] = self.pa_show_map
+        self.ground_dl_health_items_map[13] = self.fec_show_map
+        self.ground_dl_health_items_map[14] = self.fec_show_map
+        self.ground_dl_health_items_map[15] = self.fec_show_map
+        self.ground_dl_health_items_map[16] = self.fec_show_map
+        self.ground_dl_health_items_map[17] = self.antenna_show_map
 
-        self.ground_dl_health_items_map[16][0] = "ON"
-        self.ground_dl_health_items_map[16][0xff] = "OFF"
 
-        self.ground_dl_health_items_map[17][0] = "PORT1"
-        self.ground_dl_health_items_map[17][0xffff] = "PORT2"
 
 class FIFO:
     def __init__(self):
