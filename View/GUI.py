@@ -2,7 +2,7 @@
 from PyQt4 import *
 import datetime
 import time
-
+import os
 import sys
 from PyQt4 import QtGui
 from PyQt4 import QtCore
@@ -21,21 +21,31 @@ class mainClass:
         self.ot.logDebug(" Application Started !!!!")
         self.st = StyleSheet()
         self.ff = FIFO()
+
         self.twdl = TWDL()
         self.comp = Component()
-        # self.flatc = FlatcOperations(self.ot, self.ff, self.twdl)
-        # self.readconfig = ReadConfig(self.ot)
 
         self.ot.app = QtGui.QApplication([self.ot.app_name])
 
-        self.ot.desktop_width = 1080
+        self.ot.desktop_width = 1280
         self.ot.desktop_height = 640
-
         print 'desktop resolution -- ', self.ot.app.desktop().geometry().width(), self.ot.app.desktop().geometry().height()
 
         ret = GUI(self.ot, self.ff, self.st, self.comp)
         t1 = mainPage(self.ot, self.st, self.comp)
+        #listener on socket
         self.initListener()
+
+        if self.ff.udpconn.fileno() != 0:
+            self.ot.logDebug(" Socket Connection Established !!!")
+            self.ot.notifyStatus(" Socket Connection Established !!!", 1)
+        else:
+            self.ot.logWarning(" Socket Connection Failed !!!")
+            self.ot.notifyStatus("Socket Connection Failed", 2)
+
+
+
+
         sys.exit(self.ot.app.exec_())
 
 
@@ -76,10 +86,10 @@ class GUI(QtGui.QMainWindow):
 
         self.statusbar = self.statusBar()
         self.statusbar.setStyleSheet(self.st.statusbar)
-        self.ot.network_status = self.comp.createlabel(self.ot.desktop_width * 0.05, 30, "Network", self.st.valid_label)
+        self.ot.network_status = self.comp.createlabel(self.ot.desktop_width * 0.1, 30, "Network", self.st.valid_label)
         self.network_timer.timeout.connect(self.network_check)
 
-        self.ot.statusbar = self.comp.createlabel(self.ot.desktop_width * 0.92, 30, '1235478', self.st.valid_label)
+        self.ot.statusbar = self.comp.createlabel(self.ot.desktop_width * 0.82, 30, '1235478', self.st.valid_label)
         self.statusbar.addPermanentWidget(self.ot.network_status)
         self.statusbar.addPermanentWidget(self.ot.statusbar)
 
@@ -93,12 +103,22 @@ class GUI(QtGui.QMainWindow):
         help.addAction(action_help)
         action_help.triggered.connect(self.helpAction)
 
+        action_pdf = QtGui.QAction("pdf",self)
+        action_pdf.triggered.connect(self.pdfm)
+
         action_gui = QtGui.QAction("Appliaction", self)
         about.addAction(action_gui)
+        about.addAction(action_pdf)
         action_gui.triggered.connect(self.controllerApp)
 
     def network_check(self):
-        pass
+        os.system("../run_scripts/network-check.sh")
+        f = open('../out/network-check', 'r')
+        buf = ''
+        if f:
+            buf = f.read()
+            f.close()
+
 
     def screenShot(self):
         QtGui.QPixmap.grabWindow(self.ot.app.desktop().winId()).save('../out/test'+self.ot.gettimedate()+'.png', 'png')
@@ -108,10 +128,23 @@ class GUI(QtGui.QMainWindow):
         dialog.setWindowTitle("Help")
         dialog.exec_()
 
+    def pdf_action(self):
+        dialog = QtGui.QDialog()
+        dialog.setWindowTitle("More Info--ICD")
+        dialog.exec_()
+
+    def pdfm(self):
+        dialog = QtGui.QDialog()
+        dialog.setFixedSize(300, 300)
+        dialog.setWindowTitle("pdf")
+        gridlayout = QtGui.QGridLayout(dialog)
+        dialog.exec_();
+
     def controllerApp(self):
         dialog = QtGui.QDialog()
         dialog.setFixedSize(300, 300)
         dialog.setWindowTitle("Application")
+        dialog.setStyleSheet(self.st.dialog)
         gridlayout = QtGui.QGridLayout(dialog)
 
         gridlayout.addWidget(self.comp.createlabel(dialog.width() * 0.2, dialog.height() * 0.1, "Version"), 0, 0)
@@ -125,8 +158,7 @@ class GUI(QtGui.QMainWindow):
         gridlayout.addWidget(self.comp.createlabel(dialog.width() * 0.3, dialog.height() * 0.1, self.ot.getappsize()), 3, 1)
 
         dialog.exec_()
-
-
+    '''
     def closeEvent(self, event):
         reply = QtGui.QMessageBox.question(self, 'Message',
                                            "Are you sure to quit?", QtGui.QMessageBox.No |
@@ -137,14 +169,6 @@ class GUI(QtGui.QMainWindow):
             self.ot.logDebug('**************** Application Closed **************')
         else:
             event.ignore()
-    
-
-    def initListener(self):
-        rt = ReceiverHandler(self.ot, self.ff)
-        rt.start()
-
-
-
-
+    '''
 
 

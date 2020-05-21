@@ -11,6 +11,20 @@ class page1:
         self.twdl = TWDL()
         self.widget = widget
 
+        tabwidget = QtGui.QTabWidget(widget)
+        tabwidget.setFixedSize(widget.width() - 5, widget.height() - 5)
+        tabwidget.setStyleSheet(self.st.tabWidget)
+
+
+        tab1 = QtGui.QWidget()
+        tab2 = QtGui.QWidget()
+        tabwidget.addTab(tab1, " Config ")
+        tabwidget.addTab(tab2, " Data ")
+
+        self.configPage(tab1)
+
+    def configPage(self, widget):
+
         Hbox = self.comp.createHbox(widget)
 
         config_req_gb = self.configurationRequest()
@@ -18,20 +32,23 @@ class page1:
         vbox = self.comp.createVbox()
         version_gb = self.groundDLVersion()
         config_restable_gb = self.configurationResponseTable()
-        vbox.addWidget(version_gb)
-        vbox.addWidget(config_restable_gb)
+        #vbox.addWidget(version_gb)
+        #vbox.addWidget(config_restable_gb)
 
         status_gb = self.statusResponse()
         health_res_gb = self.healthResponse()
 
 
         Hbox.addWidget(config_req_gb)
-        Hbox.addLayout(vbox)
+        Hbox.addWidget(version_gb)
         Hbox.addWidget(health_res_gb)
         Hbox.addWidget(status_gb)
+        Hbox.addWidget(config_restable_gb)
+
+
 
     def statusResponse(self):
-        status_gb = self.comp.creategroupbox(self.widget.width() * 0.22, -1, " DL Status")
+        status_gb = self.comp.creategroupbox(self.widget.width() * 0.20, -1, " DL Status")
         status_gb_l = self.comp.createHbox(status_gb)
         len1 = len(self.twdl.ground_dl_status_items)
 
@@ -51,7 +68,7 @@ class page1:
 
 
     def healthResponse(self):
-        health_gb = self.comp.creategroupbox(self.widget.width() * 0.22, -1, " DL Health")
+        health_gb = self.comp.creategroupbox(self.widget.width() * 0.20, -1, " DL Health")
         health_gb_l = self.comp.createHbox(health_gb)
         len1 = len(self.twdl.ground_dl_health_items)
 
@@ -70,15 +87,13 @@ class page1:
         return health_gb
 
 
-
-
-
     def groundDLVersion(self):
-        version_gb = self.comp.creategroupbox(self.widget.width() * 0.22, -1, "Version Details")
-        version_gb_l = self.comp.createHbox(version_gb)
+        version_gb = self.comp.creategroupbox(self.widget.width() * 0.20, -1, "Version Details")
+        version_gb_l = self.comp.createVbox(version_gb)
         len1 = len(self.twdl.ground_dl_version_items)
 
         li = []
+        Hbox = self.comp.createHbox()
         vbox1 = self.comp.createVbox()
         vbox2 = self.comp.createVbox()
         for i in range(len1):
@@ -87,29 +102,45 @@ class page1:
             vbox1.addWidget(label)
             vbox2.addWidget(lineedit)
             li.append(lineedit)
-        version_gb_l.addLayout(vbox1)
-        version_gb_l.addLayout(vbox2)
+        Hbox.addLayout(vbox1)
+        Hbox.addLayout(vbox2)
+
+        hbox = self.comp.createHbox()
+        hbox.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignBottom)
+
+        button = self.comp.createpushbutton(version_gb.width() * 0.4, version_gb.height() * 0.05, "Request")
+        QtCore.QObject.connect(button, QtCore.SIGNAL("clicked()"), lambda a=0xe: self.proceedNext(a))
+        hbox.addWidget(button)
+
+        version_gb_l.addLayout(Hbox)
+        version_gb_l.addLayout(hbox)
 
         return version_gb
 
     def configurationResponseTable(self):
 
-        configrestable = self.comp.creategroupbox(self.widget.width() * .23 , -1, "Response Table")
+        configrestable = self.comp.creategroupbox(self.widget.width() * .20, -1, "Response Table")
         configrestable_l = self.comp.createHbox(configrestable)
 
 
         # creating the table with DL FREQ and UL CDMA code selection
         hbox1 = self.comp.createHbox()
         v1 = self.comp.createVbox()
+        v1.setAlignment(QtCore.Qt.AlignTop)
         v2 = self.comp.createVbox()
+        v2.setAlignment(QtCore.Qt.AlignTop)
         v3 = self.comp.createVbox()
+        v3.setAlignment(QtCore.Qt.AlignTop)
         hbox1.addLayout(v1)
         hbox1.addLayout(v2)
         hbox1.addLayout(v3)
 
         v1.addWidget(self.comp.createlabel(configrestable.width() * 0.35, 30, "Missile"))
+        v1.addWidget(self.comp.createVSpliter())
         v2.addWidget(self.comp.createlabel(configrestable.width() * 0.35, 30, "DL_FREQ"))
+        v2.addWidget(self.comp.createVSpliter())
         v3.addWidget(self.comp.createlabel(configrestable.width() * 0.35, 30, "UL-CDMA"))
+        v3.addWidget(self.comp.createVSpliter())
 
         len1 = len(self.twdl.ground_config_req_table_vheader)
         li1 = []
@@ -128,7 +159,7 @@ class page1:
         return configrestable
 
     def configurationRequest(self):
-        config_gb = self.comp.creategroupbox( self.widget.width() * 0.22, -1, " Configuration ")
+        config_gb = self.comp.creategroupbox( self.widget.width() * 0.20, -1, " Configuration ")
         config_gb_l = self.comp.createVbox(config_gb)
 
         # normal input fields without table
@@ -157,9 +188,12 @@ class page1:
         hbox1.addLayout(v2)
         hbox1.addLayout(v3)
 
-        v1.addWidget(self.comp.createlabel(config_gb.width() * 0.35, 30, "Missile"))
-        v2.addWidget(self.comp.createlabel(config_gb.width() * 0.35, 30, "DL_FREQ"))
-        v3.addWidget(self.comp.createlabel(config_gb.width() * 0.35, 30, "UL-CDMA"))
+        v1.addWidget(self.comp.createlabel(config_gb.width() * 0.35, 25, "Missile"))
+        v1.addWidget(self.comp.createVSpliter())
+        v2.addWidget(self.comp.createlabel(config_gb.width() * 0.35, 25, "DL_FREQ"))
+        v2.addWidget(self.comp.createVSpliter())
+        v3.addWidget(self.comp.createlabel(config_gb.width() * 0.35, 25, "UL-CDMA"))
+        v3.addWidget(self.comp.createVSpliter())
 
         len1 = len(self.twdl.ground_config_req_table_vheader)
         for i in range(len1):
@@ -188,7 +222,10 @@ class page1:
 
 
     def proceedNext(self, a):
-        pass
+        if a == 0xe:
+            pass
+        elif a == 4:
+            print 'config command'
 
 
 

@@ -14,36 +14,52 @@ class loginPage:
 
         print 'loginpage size', widget.width(), widget.height()
 
-        widget.resize(400, 400)
+        layout = self.comp.createVbox(widget)
+        layout.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignCenter)
 
-        layout = QtGui.QGridLayout(widget)
+        login_gp = self.comp.creategroupbox(widget.width() * 0.4, widget.height() * 0.25, "Login Page")
+        login_gp_l = self.comp.createVbox(login_gp)
 
-        layout.setAlignment(QtCore.Qt.AlignCenter)
+        login_items = ["UserName", "Password"]
+        len1= len(login_items)
 
-        label_name = QtGui.QLabel('<font size="4"> Username </font>')
-        self.lineEdit_username = QtGui.QLineEdit()
-        self.lineEdit_username.setPlaceholderText('Please enter your username')
-        layout.addWidget(label_name, 0, 0)
-        layout.addWidget(self.lineEdit_username, 0, 1)
+        Vbox = self.comp.createVbox()
+        login_gp_l.addLayout(Vbox)
 
-        label_password = QtGui.QLabel('<font size="4"> Password </font>')
-        self.lineEdit_password = QtGui.QLineEdit()
-        self.lineEdit_password.setPlaceholderText('Please enter your password')
-        layout.addWidget(label_password, 1, 0)
-        layout.addWidget(self.lineEdit_password, 1, 1)
+        hbox = self.comp.createHbox()
+        vbox1 = self.comp.createVbox()
+        vbox2 = self.comp.createVbox()
+        hbox.addLayout(vbox1)
+        hbox.addLayout(vbox2)
 
-        button_login = QtGui.QPushButton('Login')
+        Vbox.addLayout(hbox)
+
+        self.login_list = []
+        for i in range(len1):
+            username = self.comp.createlabel(login_gp.width() * 0.3, login_gp.height() * 0.18, login_items[i])
+            lineedit = self.comp.createlineedit(login_gp.width() * 0.3, login_gp.height() * 0.18, -1, self.st.line1)
+            self.login_list.append(lineedit)
+            vbox1.addWidget(username)
+            vbox2.addWidget(lineedit)
+
+        self.login_list[1].setEchoMode(QtGui.QLineEdit.Password)
+        button_login = self.comp.createpushbutton(login_gp.width() * 0.35, login_gp.height() * 0.25, "Login")
         QtCore.QObject.connect(button_login, QtCore.SIGNAL("clicked()"),
-                        lambda a=self.lineEdit_username,b=self.lineEdit_password: self.check_password(a, b))
-        #QtCore.Qt.Qobjectbutton_login.clicked.connect(self.check_password)
-        layout.addWidget(button_login, 2, 1)
-        layout.setRowMinimumHeight(2, 100)
-        layout.setColumnMinimumWidth(2, 100)
+                        lambda a=self.login_list : self.check_password(a))
 
-    def check_password(self, username, passwd):
+        hbox = self.comp.createHbox()
+        hbox.setAlignment(QtCore.Qt.AlignBottom | QtCore.Qt.AlignCenter)
+        hbox.addWidget(button_login)
+        login_gp_l.addWidget(self.comp.createVSpliter())
+        login_gp_l.addLayout(hbox)
+
+        layout.addWidget(login_gp)
+
+
+    def check_password(self, list1):
         #print 'at check passwod callback', username.text(), '----', passwd.text()
-        if username.text() == self.ot.username and passwd.text() == self.ot.password :
+        if list1[0].text() == self.ot.username and list1[1].text() == self.ot.password :
             self.ot.stackwidget.setCurrentIndex(1)
             self.ot.notifyStatus(" Login Successs.... ", 1)
         else:
-            self.ot.notifyStatus(" login failed !!!!  credentials are " + username.text() + '   ' + passwd.text(), 2)
+            self.ot.notifyStatus(" login failed !!!!  credentials are " + list1[0].text() + '   ' + list1[1].text(), 2)

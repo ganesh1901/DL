@@ -56,13 +56,18 @@ class mainPage:
             stackpages.append(widget)
 
         #testing purpose
-        #stackwidget.setCurrentIndex(1)
+        stackwidget.setCurrentIndex(1)
 
         loginPage(self.ot, self.st, self.comp, stackpages[0])
+
         page1(self.ot, self.st, self.comp, stackpages[1])
+
+
+        '''
+        
         page2(self.ot, self.st, self.comp, stackpages[2])
         page3(self.ot, self.st, self.comp, stackpages[3])
-
+        '''
 
 
 
